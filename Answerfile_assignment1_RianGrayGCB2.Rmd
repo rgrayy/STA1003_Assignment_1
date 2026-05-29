@@ -1,0 +1,394 @@
+This assignment is worth 12% and due October 12th. Make sure to answer each question fully in the assigned grey box, both code and comments/interpretation
+
+Name: Rian Gray
+Student number: 23199
+Question 1
+```{r}
+# A vector named Vector which starts with the number 69 and decreases by 7 at a time until it reaches the number 20
+vector <- seq(69, 20, -7)
+vector
+
+# A vector named Values which contains all whole numbers from 16 to 38, repeated 7 times
+values <- rep(16:38, 7)
+values
+
+# Which do you expect to be larger, the median of (Values multiplied by 47) or the maximum of (Vector multiplied by 2)?
+# I expect the median of values multiplied by 47 to be larger. This is because the maximum of vector is 69, and 69 x 2 would only give 138. In comparison, I would estimate that the median of values is somewhere in the mid 20s, and this number multiplied by 47 would give a far larger number.
+
+# Write code to answer the question above and comment if you were right or wrong
+max(vector) * 2
+# gives 138
+median(values) * 47
+# gives 1269
+# I was right, median of values multiplied by 47 (1269) is larger than maximum of vector multiplied by 2 (138)
+```
+
+Question 2
+```{r}
+# set working directory
+setwd("C:/Users/riang/Desktop/GCB2/STA1003Statistics/R")
+
+# open file
+mw <- read.csv(file="Mice_Weights.csv")
+
+# Add a column to the data which is the mouse’s age in weeks
+mw$ag_weeks <- floor(mw$ag_day / 7)
+
+# Write a comment identifying whether any of the weights are obvious outliers to the rest of the data. If so find which college the outlier(s) were sourced from. If the data does contain outliers there is no need to remove or alter them before the next step
+library(ggplot2)
+ggplot(mw, aes(x= Coll_source, y = wgt_g)) + geom_boxplot() + labs(x = "College source", y = "Weight (g)", title = "Mice Weights")
+# There is a very obvious outlier as seen in the mice weights data, a weight of 345g from UCD
+
+# What is the median of the age in days of individuals who were sourced from DCU and were kept in a Tecniplast cage?
+median(mw$ag_day[mw$Coll_source == "DCU" & mw$cage_manu == "Tecniplast"])
+# gives 33 days
+
+# What is the minimum of the weight of individuals who were sourced from UCD and were not kept in a Tecniplast cage?
+min(mw$wgt_g[mw$Coll_source == "UCD" & mw$cage_manu != "Tecniplast"])
+# gives 12.6 g
+```
+Question 3
+```{r}
+# open file
+lr <- read.csv(file="Labrats.csv")
+
+# Display the information in columns 3, 1 of rows 7, 17, 24, 48, 21 in the dataset in that order
+lr[c(7,17,24,48,21), c(3,1)]
+
+# Find the average of all male heart rate measurements
+mean(lr$hrt_rt[lr$rat_sex == "M"])
+# gives 414.2 bpm
+
+# Find the five number summary of all weight measurements
+fivenum(lr$wgt)
+# gives 252.9, 272.5, 290.1, 302.8, 331.0
+
+# Find the minimum of all blood glucose measurements less than 95
+min(lr$gluc[lr$gluc < 95])
+# gives 50 mg/dL
+```
+Question 4
+```{r}
+# open file
+plotB <- read.csv(file="Data_for_plot_B.csv")
+
+# Write code to recreate the following plot, making appropriate changes to axis labels to show units
+ggplot(plotB, aes(x = B_RNA, y = B_prot, color = Bmutn_pres)) + geom_point() + labs(title = "B protein levels by B RNA levels in presence or absence of B mutation", x = "B RNA Quantity (RPMK)", y = "B Protein Quantity (µg/mL)") + geom_smooth(method = "lm", se = FALSE) + theme_classic()
+
+# Add a comment here to say if you think there is any relationship between RNA levels and protein levels of gene B. If John has a higher RNA B expression level than Mary how would you expect their protein levels to compare?
+# I think there is a relationship, which is evident from the scatter plot. As B RNA levels increase, B protein levels also increase. The two regression lines show a strong upward trend. If John had a higher RNA B expression level than Mary, John would also have a higher B protein level than Mary.
+
+# Do you think the presence or absence of a mutation in gene B changes the relationship between the protein and RNA levels? If Tom and Harry have the same RNA levels but only Tom has the mutation do you expect their protein levels to be the same or different? 
+# Yes, the presence of a mutation in gene B does change the relationship. If the mutation is present, the levels of B RNA are lower, so the levels of B protein produced are less. If the mutation is not present, the levels of B RNA are higher, so levels of B protein produced are higher.
+```
+Question 5
+```{r}
+# open file
+plotG <- read.csv("Data_for_plot_G.csv")
+
+# Write code to recreate the following plots
+ggplot(plotG, aes(x = class_memb, y = exam, colour = class_memb)) + geom_boxplot() + labs(x="Class", y="Exam result", title="Exam results by class") + geom_point(size=4)
+
+ggplot(plotG, aes( x = class_memb, y = exam, colour = class_memb)) + geom_boxplot() + facet_wrap(~sex) + labs(x="Class", y="Exam result", title="Exam results by class and sex") + geom_point(size=4)
+
+# From the plot who has the higher median exam results, boys in GCB or girls in BT? Explain your thinking based on the plot and then find the answer
+# From the plot, we can see the median exam results of girls in BT are higher than boys in GCB. This is because the median line of the girls in BT box plot is higher than the median line of the boys in GCB box plot.
+median(plotG$exam[plotG$sex == "M" & plotG$class_memb == "GCB"])
+# gives 62
+median(plotG$exam[plotG$sex == "F" & plotG$class_memb == "BT"])
+# gives 66
+# median results of girls in BT is indeed higher
+```
+Question 6
+```{r}
+# open file
+plotE <- read.csv("Data_for_plot_E.csv")
+
+# Write code to recreate the following plots
+ggplot(plotE, aes(x = class_memb, fill = sex)) + geom_bar()
+
+ggplot(plotE, aes(x = sex, y = exam, fill = class_memb)) + geom_boxplot() + theme_classic() + labs(x="Sex", y="Exam results", title="Exam results by class and sex")
+
+# From the second plot are there any exam results which were extremely high or low for their group? If so name the class and sex of the individual(s) with these unusual marks.
+# Yes there is, there are two outliers shown in the plot. These individuals are a female in GCB who scored extremely high, and a male in BT who scored extremely low.
+```
+Question 7
+```{r}
+# A normal distribution has a mean of 191 and standard deviation of 58.8.
+# Comment if you think the the proportion of the population with a measurement bigger than 136.5 will be bigger or smaller than 50% and why you think so
+# Since 136.5 is below the mean of 191, more than 50% of the population will have measurements greater than 136.5.
+
+# Comment if you think the proportion of the population smaller than 262.3 will be bigger or smaller than 50% and why you think so .
+# Since 262.3 is above the mean of 191, more than 50% of the population will fall below 262.3.
+
+# Write code to calculate the two proportions and see if you were right
+1- pnorm(136.5, 191, 58.8)
+# 82.3% of the population have a measurement bigger than 136.5
+pnorm(262.3, 191, 58.8)
+# 88.7% of the population have a measurement smaller than 262.3
+
+# The biggest 20% of the population are all bigger than what cutoff value?
+qnorm(0.8, 191, 58.8)
+# The biggest 20% of the population are all bigger than 240.4873
+```
+Question 8
+```{r}
+# open file
+VO2data <- read.csv("VO2max_fileC.csv")
+
+# Are men’s average VO2max values after training higher than women’s average VO2max values after training at 5% significance? NOTE you may need to remove the people who did not give a gender before making the comparison
+# Remember to visualise the data, give your educated guess based on the image, hypotheses and decision.
+# Remove rows with missing gender
+VO2clean <- VO2data[VO2data$gender != "n/a",]
+
+# visualise the data and educated guess
+ggplot(VO2clean, aes(x = gender, y = posttrain)) + geom_boxplot()
+# I would guess that after visualising the data, that mens average VO2max values after training would be higher than women's average VO2max values after training.
+
+# hypotheses
+# H₀ - Men's average VO2 max values after training are equal to or less than women's average VO2max values after training
+# Hₐ - Men's average VO2 max values after training are higher than women's average VO2max values after training
+
+
+# make two datasets, one for M and F
+VO2M <- VO2clean$posttrain[VO2clean$gender == "M"]
+VO2F <- VO2clean$posttrain[VO2clean$gender == "F"]
+
+# do a t-test
+t.test(VO2M, VO2F, alternative = "greater")
+# gives p value = 0.03147
+# Decision - as the p value of 0.03147 < 0.05, the null hypothesis is rejected. Men's average VO2 max values after training are higher than women's average VO2max values after training.
+
+```
+Question 9
+```{r}
+# open file
+bw <- read.csv("Birthweights.csv")
+
+# What is the average birthweight of a baby born at low altitude? What is the average birthweight of a baby born at high altitude?
+mean(bw$birthweight[bw$alti == "low"])
+# low - 3250.983
+mean(bw$birthweight[bw$alti == "high"])
+# high - 2857.775
+
+# Does this data support the idea that babies born at high altitude have a lower birthweight than the national average of 3.3kg?
+# Remember to visualise the data, give your educated guess based on the image, hypotheses and decision.
+# visualise data
+ggplot(bw, aes(x=alti, y=birthweight)) + geom_boxplot() + geom_hline(yintercept = 3300, linetype = "dashed", color = "red")
+# educated guess based on image - Yes, it can be seen from the boxplot that most babies born at low altitude have birth weights below the dashed line, which represents the national average.
+# hypotheses
+# H₀ - There is no difference in the birthweight of babies born at low atltitude and the national average
+# Hₐ - The birthweight of babies born at high altitude is lower than the national average
+
+# subset for high alti births
+highalt <- subset(bw, alti == "high")
+# perform t-test
+t.test(highalt$birthweight, mu = 3300, alternative = "less")
+# gives p = 1.278e-06
+# decision - as p < 0.05, the null hypothesis is rejected. This means that the birthweight of babies born at high altitude is lower than the national average.
+
+# Comment to give another hypothesis it would be possible to test using this dataset, you do not need to code for it, simply give the null and alternative hypotheses
+# H₀ - Maternal age has no effect on the birth weight of a newborn baby boy
+# Hₐ - Maternal age significantly effects the birth weight of a newborn baby boy
+```
+Question 10
+```{r}
+# A scientist performs a two tailed t test at 5% significance to distinguish between healthy mice with a mean blood Protein Y concentration of 32 ug/dL and sick mice with a mean Protein Y concentration of 19.8 ug/dL and a standard deviation in both distributions of 7.9
+# What number of mice would she need to test in each sample to get a power of 80%?
+# values for power t-test
+healthymean <- 32
+sickmean <- 19.8
+micesd <- 7.9
+meandiff <- healthymean - sickmean
+
+# conduct power t-test
+power.t.test(delta = meandiff, sd = micesd, sig.level = 0.05, power = 0.8, type = "two.sample", alternative = "two.sided")
+# gives n = 7.672566
+# as n isnt a whole number, round up to next whole number -> 8 mice would be needed in each sample to get a power of 80%
+
+# Write code to perform 1000 experiments in which that sample size of mice are generated from each distribution and the test performed
+# create an empty vector
+pvals <- c()
+n <- 8
+
+# create loop for 1000 mice experiments
+for (i in 1:1000) {
+  healthy <- rnorm(n, mean = healthymean, sd = micesd)
+  sick <- rnorm(n, mean = sickmean, sd = micesd)
+  test <- t.test(healthy, sick, var.equal = TRUE)
+  pvals[i] <- test$p.value
+}
+
+#How many of those pvalues are <0.05?
+length(pvals[pvals<0.05])
+# has given me 806
+
+# Comment on how many of the tests are significant at a 5% significance and how this compares to what you expect
+# After running the code, I got the result that 806 tests were significant at 5% significance. Since the power is 80%, it would be expected that around 800 of the tests would be significant. My result of 806 matches up to this expected number of tests.
+
+# If the sample size remained the same but the test was changed to a one tailed t test at 5% significance would the power increase or decrease?
+power.t.test(delta = meandiff, sd = micesd, sig.level = 0.05, n = 8, type = "two.sample", alternative = "one.sided")
+# Answer - Power increased, went up to 0.9013765
+# Explanation - Increases power because concentrating the entire rejection region in one tail reduces the critical value needed to reject the null hypothesis in the expected direction
+# If the sample size remained the same and the test remained a two tailed t test but changed to 10% significance would the power increase or decrease?
+power.t.test(delta = meandiff, sd = micesd, sig.level = 0.10, n = 8, type = "two.sample", alternative = "two.sided")
+# Answer - Power increased, went up to 0.9013765
+# Explanation - Increases power because enlarging the rejection region lowers the threshold for significance, making true effects more likely to be detected
+
+
+```
+
+STOPPING POINT
+
+If you were not in GCB1 you have now finished your 10 questions and completed the assignment
+If you were in GCB1 you're nearly there, finish the last 5
+
+
+
+Question 11
+```{r}
+# A normal distribution has a mean of 62 and standard deviation of 6.9. Recreate the following plot, shading the area less than 46.8 or greater than 70.3 in blue and editing the title to add the calculated proportion of the population in the shaded area
+
+# data for curve
+x <- seq(40, 85, length.out = 400)
+normaldist <- data.frame(x = x, y = dnorm(x, 62, 6.9))
+
+# calculate the tail proportion
+prop <- pnorm(46.8, 62, 6.9) + (1 - pnorm(70.3, 62, 6.9))
+prop
+# gives 0.1283087 -> 12.83%
+
+# data for shading
+lower <- subset(normaldist, x <= 46.8)
+
+upper <- subset(normaldist, x >= 70.3)
+
+
+# create plot
+ggplot(normaldist, aes(x, y)) + geom_line() + geom_area(data = lower, aes(x, y), fill = "blue") + geom_area(data = upper, aes(x, y), fill = "blue") + labs(title = "12.83% of population more extreme than limits", x = "", y = "") + theme_classic()
+
+```
+Question 12
+
+```{r}
+# Before writing any code write a comment stating which you expect to be larger:
+# the proportion of a distribution with mean 588 and standard deviation of 82.2 which is smaller than 521.5 or the proportion of a distribution with mean 416 and standard deviation of 34.9 which is smaller than 481?
+# Answer - I expect the second proportion (from the distribution with mean 416 and SD 34.9) to be larger, because 481 is above its mean, so most of the distribution lies below it. In contrast, 521.5 is below the mean of 588, so less than half of that distribution falls below it.
+
+#Write code to check which proportion is actually larger and give the proportions as percentages of the population
+# calculate proportions
+prop1 <- pnorm(521.5, mean = 588, sd = 82.2) * 100
+prop2 <- pnorm(481, mean = 416, sd = 34.9) * 100
+prop1
+# gives 20.93%
+prop2
+# gives 96.87%
+# I was correct, the second proportion was larger at 96.87% of the population, while the first proportion was only 20.93% of the population
+# For the distribution with mean 588 and standard deviation of 82.2 the largest 33% of the population are all bigger than what value?
+prop3 <- qnorm(0.67, mean = 588, sd = 82.2, 0.33)
+prop3
+# gives 551.8391, the largest 33% of the population are bigger than 551.8391
+```
+Question 13
+
+```{r}
+# open file
+VO2A <- read.csv("VO2max_fileA.csv")
+
+# Do participant’s VO2 max values increase after training at 5% significance?
+# Remember to visualise the data, give your educated guess, hypotheses and decision.
+# visualise data by creating a boxplot
+
+ggplot(VO2A) +
+  geom_boxplot(aes(x = 1, y = untrained), fill = "blue") +
+  geom_boxplot(aes(x = 2, y = posttrain), fill = "red") +
+  scale_x_continuous(breaks = c(1, 2), labels = c("Untrained", "Post-Training")) +
+  labs(x = "", y = "VO2max (mL/kg/min)", title = "VO2max: Pre vs Post Training") +
+  theme_minimal()
+
+# educated guess - I think that participant's VO2max values do increase after training, as the post-training boxplot clearly shows higher values than the untrained boxplot.
+
+# hypotheses
+# H₀ - There is no difference between VO2max values before and after training
+# Hₐ - Participants VO2max values do increase after training 
+
+# perform t-test
+t.test(VO2A$posttrain, VO2A$untrained, paired = TRUE, alternative = "greater")
+# gives p = 2.2e-16, which is much less than 0.05
+# Decision - As p < 0.05, the null hypothesis is rejected, and my educated guess is proven. The VO2 max values of participants do increase after training.
+
+```
+Question 14
+
+```{r}
+# open file
+VO2E <- read.csv("VO2max_fileE.csv")
+
+# VO2 max values can vary with fitness and activity levels, anyone above 55 ml/kg/min (male) or above 50 ml/kg/min (female) is likely to be a highly trained athlete. How many people fall within this category before training?
+# create vectors of VO2max values of untrained athletes by gender
+athleteM <- VO2E$untrained[VO2E$gender == "M" & VO2E$untrained > 55]
+athleteF <- VO2E$untrained[VO2E$gender == "F" & VO2E$untrained > 50]
+# use length() to count how many athletes
+length(athleteM) + length(athleteF)
+# gives 19 athletes
+
+# Do participant’s VO2 max values increase after training at 5% significance? Remember to visualise the data, give your informed guess, hypotheses, and decision
+
+ggplot(VO2E) +
+  geom_boxplot(aes(x = 1, y = untrained), fill = "green") +
+  geom_boxplot(aes(x = 2, y = posttrain), fill = "orange") +
+  scale_x_continuous(breaks = c(1, 2), labels = c("Untrained", "Post-Training")) +
+  labs(x = "", y = "VO2max (mL/kg/min)", title = "VO2max: Pre vs Post") +
+  theme_minimal()
+
+# educated guess - I think that participant's VO2max values do increase after training, as the post-training boxplot clearly shows higher values than the untrained boxplot.
+
+# hypotheses
+# H₀ - There is no difference between VO2max values before and after training
+# Hₐ - Participants VO2max values do increase after training 
+
+# perform t-test
+t.test(VO2E$posttrain, VO2E$untrained, paired = TRUE, alternative = "greater")
+# gives p = 2.2e-16, which is much less than 0.05
+# Decision - As p < 0.05, the null hypothesis is rejected, and my educated guess is proven. The VO2 max values of participants do increase after training.
+```
+Question 15
+
+```{r}
+# Healthy people have a normally distributed protein X concentration with a mean of 83, sick people have a mean of 66.9, both have a standard deviation of 7. Recreate the following plot
+# create datasets
+healthy <- rnorm(1000, 83, 7)
+sick <- rnorm(1000, 66.9, 7)
+
+ggplot(data.frame(x = c(45, 105)), aes(x)) + 
+  stat_function(fun = dnorm, args = list(mean = 83, sd = 7), col='blue') +
+  stat_function(fun = dnorm, args = list(mean = 66.9, sd = 7), col='red') + theme_classic() + labs(
+    x="Protein X Concentration", y="", 
+    title = "Distributions of Protein X in healthy people\n(mean = 83) and sick people (mean = 66.9)" ) + scale_y_continuous(labels = NULL) + theme(axis.ticks.y = element_blank()) + scale_x_continuous(breaks = c(60, 80, 100))
+
+# Using a test of protein X in the blood anybody with a protein X concentration lower than 76.56 is declared sick. Create a plot based on the one above but which also shades the portion of the sick population who will be falsely declared healthy blue.
+# create data frame for shading false negatives
+declaredhealthy <- seq(76.56, 105, length.out = 500)
+falseneg <- dnorm(declaredhealthy, mean = 66.9, sd = 7)
+shaded <- data.frame(declaredhealthy, falseneg)
+
+# using previous plot, use geom area to shade in area of sick people falsely declared healthy
+ggplot(data.frame(x = c(45, 105)), aes(x)) + 
+  stat_function(fun = dnorm, args = list(mean = 83, sd = 7), col='blue') +
+  stat_function(fun = dnorm, args = list(mean = 66.9, sd = 7), col='red') + geom_area(data = shaded, aes(x = declaredhealthy, y = falseneg), fill = "blue", alpha = 0.3) + theme_classic() + labs(
+    x="Protein X Concentration", y="", 
+    title = "Distributions of Protein X in healthy people\n(mean = 83) and sick people (mean = 66.9)" ) + scale_y_continuous(labels = NULL) + theme(axis.ticks.y = element_blank()) + scale_x_continuous(breaks = c(60, 80, 100))
+
+
+# Use code to predict the power of this test for a single person. Does this bear any relationship to the shaded area in the second plot?
+power <- pnorm(76.56, 66.9, 7)
+power
+# power = 0.9162067, or 91.6%
+
+# what % of sick people lie in the shaded area
+falsenegrate <- 1 - power
+falsenegrate
+# gives 0.08379332, or 8.4%
+
+# Power of this test does bear a relationship to the shaded area. The power of this test, being 91.6%, is the amount of sick people who will be declared sick. The shaded area under the sick curve represents sick people who have been falsely declared healthy. The percentage of sick people within this area can be calculated by doing 1 - power, which gives 8.4%. So by knowing the power of the test, the false negative rate can then also be calculated.
+```
